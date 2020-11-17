@@ -25,6 +25,7 @@ public class Client extends Application implements Runnable {
     private ObjectInputStream objectIn;
     private ObjectOutputStream objectOut;
     private DataInputStream dataIn;
+    boolean wait = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -72,6 +73,15 @@ public class Client extends Application implements Runnable {
                 controller.populate();
             });
 
+            //while(!wait) {System.out.println(wait);}
+            game = (Game) objectIn.readObject();
+
+            System.out.println(game.getScore1() + " jek " + game.getScore2());
+
+            Platform.runLater(() -> {
+                controller.showCorrectAnswer();
+                controller.updateScore(game.getScore1(), game.getScore2());
+            });
 
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -81,17 +91,21 @@ public class Client extends Application implements Runnable {
     public void sendGame() {
         try {
             if (clientID == 1) {
-                System.out.println("Selected client1 " + game.getSelected1());
+                System.out.println("[CLIENT] Player #1 selected " + game.getSelected1() + ".");
                 objectOut.writeObject(game);
                 objectOut.flush();
             } else if (clientID == 2) {
-                System.out.println("Selected client2 " + game.getSelected2());
+                System.out.println("[CLIENT] Player #2 selected " + game.getSelected2() + ".");
                 objectOut.writeObject(game);
                 objectOut.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setWait(boolean wait) {
+        this.wait = wait;
     }
 
 }

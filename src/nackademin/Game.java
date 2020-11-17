@@ -15,6 +15,7 @@ public class Game implements Serializable {
     private String selected1;
     private String selected2;
     private ArrayList<String> answers;
+    private boolean bool;
 
 
     public Game() {
@@ -33,48 +34,53 @@ public class Game implements Serializable {
     public Game getGame() {
         return this;
     }
-
     public String getQuestion() {
         return qa.getQuestion();
     }
-
     public String getAnswer() {
         return qa.getAnswer();
     }
-
+    public String getPlayer1() {
+        return player1;
+    }
+    public String getPlayer2() {
+        return player2;
+    }
+    public String getSelected1(){
+        return selected1;
+    }
+    public String getSelected2(){
+        return selected2;
+    }
+    public boolean getBool() {
+        return bool;
+    }
     public List<String> getAnswers() {
         shuffleAnswers();
         return answers;
     }
-
-    public String getPlayer1() {
-        return player1;
+    public int getScore1 () {
+        return score1;
     }
-
-    public String getPlayer2() {
-        return player2;
+    public int getScore2 () {
+        return score2;
     }
 
     private void setPlayer1() {
         player1 = "#1";
     }
-
     private void setPlayer2() {
         player2 = "#2";
     }
-
     public void setSelected1(String selected) {
         selected1 = selected;
     }
     public void setSelected2(String selected) {
         selected2 = selected;
     }
-
-    public String getSelected1(){
-        return selected1;
-    }
-    public String getSelected2(){
-        return selected2;
+    public void setBool(boolean bool) {
+        this.bool = bool;
+        gradeAnswers();
     }
 
     private void shuffleAnswers() {
@@ -84,5 +90,13 @@ public class Game implements Serializable {
         answers.add(qa.getAlternative3());
 
         Collections.shuffle(answers);
+    }
+    private void gradeAnswers() {
+        if (getSelected1().equals(getAnswer())) {
+            score1++;
+        }
+        if (getSelected2().equals(getAnswer())) {
+            score2++;
+        }
     }
 }

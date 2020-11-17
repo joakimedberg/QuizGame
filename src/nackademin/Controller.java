@@ -88,8 +88,8 @@ public class Controller implements Initializable {
         pos3.setDisable(true);
         pos4.setDisable(true);
 
-        System.out.println("hej");
         client.sendGame();
+        client.setWait(true);
 
     }
 
@@ -104,6 +104,14 @@ public class Controller implements Initializable {
         } else if (pos4.getText().equals(game.getAnswer())) {
             pos4.setStyle(color);
         }
+    }
+
+    public void updateScore(int sc1, int sc2) {
+
+        System.out.println("score1 " + score1.getText() + " " + game.getScore1());
+        System.out.println("score2 " + score2.getText()+ " " + game.getScore2());
+        score1.setText(String.valueOf(sc1));
+        score2.setText(String.valueOf(sc2));
     }
 
 }

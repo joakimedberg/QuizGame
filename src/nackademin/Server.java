@@ -15,8 +15,6 @@ public class Server {
     private ArrayList<ClientHandler> clients = new ArrayList<>();
     private Game game;
 
-    private boolean count1 = false;
-    private boolean count2 = false;
 
     public Server() {
 
@@ -37,9 +35,9 @@ public class Server {
             System.out.println("[SERVER] Waiting for connections...");
             while (clients.size() < 2) {
                 Socket socket = serverSocket.accept();
-                ClientHandler ssc = new ClientHandler(socket, (clients.size() + 1));
-                clients.add(ssc);
-                executorService.execute(ssc);
+                ClientHandler clientHandler = new ClientHandler(socket, (clients.size() + 1));
+                clients.add(clientHandler);
+                executorService.execute(clientHandler);
                 System.out.println("[SERVER] Player #" + clients.size() + " has connected.");
             }
             game = new Game();
@@ -76,12 +74,14 @@ public class Server {
                 dataOut.writeInt(clientID);
                 dataOut.flush();
 
+                // send Game object
                 while(clients.size() < 2) {}
                 for (ClientHandler c : clients) {
                     c.objectOut.writeObject(game);
-                    c.dataOut.flush();
+                    c.objectOut.flush();
                 }
 
+                // receive selected answers from clients
                 for (ClientHandler c : clients) {
                     if (c.clientID == 1) {
                         game.setSelected1(((Game) clients.get(0).objectIn.readObject()).getSelected1());
@@ -91,6 +91,17 @@ public class Server {
                         System.out.println("[SERVER] Player 2 picked " + game.getSelected2());
                     }
                 }
+
+                game.setBool(true);
+
+                for (ClientHandler c : clients) {
+                    c.objectOut.reset();
+                    System.out.println("score1 " + game.getScore1());
+                    c.objectOut.writeObject(game);
+                    c.objectOut.flush();
+                }
+
+
 
 
 
