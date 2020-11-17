@@ -88,8 +88,8 @@ public class Controller implements Initializable {
         pos3.setDisable(true);
         pos4.setDisable(true);
 
+        System.out.println("hej");
         client.sendGame();
-
 
     }
 

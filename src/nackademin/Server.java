@@ -82,27 +82,18 @@ public class Server {
                     c.dataOut.flush();
                 }
 
-                while (count1 == false || count2 == false) {
-                    System.out.println("count1" + count1);
-                    System.out.println("count2" + count2);
-                    if (clientID == 1) {
-                        game.setSelected1(((Game) objectIn.readObject()).getSelected1());
+                for (ClientHandler c : clients) {
+                    if (c.clientID == 1) {
+                        game.setSelected1(((Game) clients.get(0).objectIn.readObject()).getSelected1());
                         System.out.println("[SERVER] Player 1 picked " + game.getSelected1());
-                        count1 = true;
-                    } else if (clientID == 2) {
-                        game.setSelected2(((Game) objectIn.readObject()).getSelected2());
+                    } else if (c.clientID == 2) {
+                        game.setSelected2(((Game) clients.get(1).objectIn.readObject()).getSelected2());
                         System.out.println("[SERVER] Player 2 picked " + game.getSelected2());
-                        count2 = true;
                     }
-
-                    System.out.println("count1" + count1);
-                    System.out.println("count2" + count2);
-                    System.out.println();
                 }
 
-                game.setSelected2(((Game) objectIn.readObject()).getSelected2());
 
-                System.out.println(game.getSelected1()+ "   " + game.getSelected2());
+
             } catch (IOException | NullPointerException | ClassNotFoundException ex) {
                 ex.printStackTrace();
             }

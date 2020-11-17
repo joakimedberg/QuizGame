@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
+
 import nackademin.Game;
 
 public class Client extends Application implements Runnable {
@@ -72,7 +73,6 @@ public class Client extends Application implements Runnable {
             });
 
 
-
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -80,14 +80,18 @@ public class Client extends Application implements Runnable {
 
     public void sendGame() {
         try {
-            System.out.println(game.getSelected1());
-            System.out.println(game.getSelected2());
-            objectOut.writeObject(game);
-            objectOut.flush();
+            if (clientID == 1) {
+                System.out.println("Selected client1 " + game.getSelected1());
+                objectOut.writeObject(game);
+                objectOut.flush();
+            } else if (clientID == 2) {
+                System.out.println("Selected client2 " + game.getSelected2());
+                objectOut.writeObject(game);
+                objectOut.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
 }
