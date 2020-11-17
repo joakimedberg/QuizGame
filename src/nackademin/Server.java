@@ -1,9 +1,6 @@
 package nackademin;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -16,7 +13,10 @@ public class Server {
     private ServerSocket serverSocket;
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
     private ArrayList<ClientHandler> clients = new ArrayList<>();
-    private int countOfSelected = 0;
+    private Game game;
+
+    private boolean count1 = false;
+    private boolean count2 = false;
 
     public Server() {
 
@@ -25,7 +25,6 @@ public class Server {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
     public static void main(String[] args) {
@@ -43,26 +42,25 @@ public class Server {
                 executorService.execute(ssc);
                 System.out.println("[SERVER] Player #" + clients.size() + " has connected.");
             }
+            game = new Game();
             System.out.println("[SERVER] 2/2 players.");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    private class ClientHandler implements Runnable {
+    public class ClientHandler implements Runnable {
 
         private Socket socket;
-        private DataInputStream dataIn;
-        private DataOutputStream dataOut;
         private ObjectOutputStream objectOut;
+        private ObjectInputStream objectIn;
+        private DataOutputStream dataOut;
 
         private int clientID;
         private String selected;
-        private Database db;
 
 
         public ClientHandler(Socket socket, int clientID) {
-            db = new Database();
             this.socket = socket;
             this.clientID = clientID;
 
@@ -71,56 +69,47 @@ public class Server {
         @Override
         public void run() {
             try {
-                dataIn = new DataInputStream(socket.getInputStream());
-                dataOut = new DataOutputStream(socket.getOutputStream());
                 objectOut = new ObjectOutputStream(socket.getOutputStream());
+                dataOut = new DataOutputStream((socket.getOutputStream()));
+                objectIn = new ObjectInputStream(socket.getInputStream());
 
                 dataOut.writeInt(clientID);
                 dataOut.flush();
 
-                objectOut.writeObject(db.getQuestions().get(0));
-                objectOut.flush();
-
-                while (countOfSelected < 2) {
-                    if (clientID == 1) {
-                        receiveSelected();
-                        System.out.println("[SERVER] Player 1 picked " + selected);
-                        ++countOfSelected;
-                    } else if (clientID == 2) {
-                        receiveSelected();
-                        System.out.println("[SERVER] Player 2 picked " + selected);
-                        ++countOfSelected;
-                    }
+                while(clients.size() < 2) {}
+                for (ClientHandler c : clients) {
+                    c.objectOut.writeObject(game);
+                    c.dataOut.flush();
                 }
-                System.out.println("[SERVER] All players have picked an answer.");
 
-                sendCompleted(true);
-                System.out.println("[SERVER] Turn is completed. Showing correct answer.");
+                while (count1 == false || count2 == false) {
+                    System.out.println("count1" + count1);
+                    System.out.println("count2" + count2);
+                    if (clientID == 1) {
+                        game.setSelected1(((Game) objectIn.readObject()).getSelected1());
+                        System.out.println("[SERVER] Player 1 picked " + game.getSelected1());
+                        count1 = true;
+                    } else if (clientID == 2) {
+                        game.setSelected2(((Game) objectIn.readObject()).getSelected2());
+                        System.out.println("[SERVER] Player 2 picked " + game.getSelected2());
+                        count2 = true;
+                    }
 
-            } catch (IOException | NullPointerException ex) {
+                    System.out.println("count1" + count1);
+                    System.out.println("count2" + count2);
+                    System.out.println();
+                }
+
+                game.setSelected2(((Game) objectIn.readObject()).getSelected2());
+
+                System.out.println(game.getSelected1()+ "   " + game.getSelected2());
+            } catch (IOException | NullPointerException | ClassNotFoundException ex) {
                 ex.printStackTrace();
             }
         }
-
-        private void sendCompleted(boolean bool) throws IOException {
-            for (ClientHandler c : clients) {
-                c.dataOut.writeBoolean(bool);
-                c.dataOut.flush();
-            }
-        }
-
-        private void receiveSelected() throws IOException {
-            selected = dataIn.readUTF();
-        }
-
-        private void closeConnection() {
-            try {
-                socket.close();
-                System.out.println("[SERVER] Connection closed.");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-
     }
+
+
+
+
 }

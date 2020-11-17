@@ -7,11 +7,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.Socket;
+import nackademin.Game;
 
 public class Client extends Application implements Runnable {
 
@@ -19,14 +17,13 @@ public class Client extends Application implements Runnable {
     private String selected;
 
     private Controller controller;
-    private Question question;
+    private Game game;
     private Stage stage;
 
     private Socket socket;
-    private DataInputStream dataIn;
-    private DataOutputStream dataOut;
     private ObjectInputStream objectIn;
-
+    private ObjectOutputStream objectOut;
+    private DataInputStream dataIn;
 
     public static void main(String[] args) {
         launch(args);
@@ -59,57 +56,38 @@ public class Client extends Application implements Runnable {
     public void run() {
         try {
             socket = new Socket("localhost", 12345);
-            dataIn = new DataInputStream(socket.getInputStream());
-            dataOut = new DataOutputStream(socket.getOutputStream());
             objectIn = new ObjectInputStream(socket.getInputStream());
+            objectOut = new ObjectOutputStream(socket.getOutputStream());
+            dataIn = new DataInputStream(socket.getInputStream());
 
             clientID = dataIn.readInt();
 
-            System.out.println("[CLIENT] Connected to server as Player #" + clientID + ".");
-
-            question = null;
-            question = (Question) objectIn.readObject();
-            System.out.println("[CLIENT] Question: " + question.getQuestion());
+            /* TODO fix crash that happens when second player connects too fast */
+            game = (Game) objectIn.readObject();
 
             Platform.runLater(() -> {
                 stage.setTitle("Quiz Game - Player #" + clientID);
-                controller.populate(question);
+                controller.setGame(game, clientID);
+                controller.populate();
             });
 
-            while (true) {
-                if (dataIn.readBoolean()) {
-                    break;
-                }
-            }
-            Platform.runLater(() -> controller.showCorrectAnswer());
-            System.out.println("[CLIENT] Round completed. Correct answer is displayed.");
+
 
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
     }
 
-    private void closeConnection() {
+    public void sendGame() {
         try {
-            socket.close();
-            System.out.println("[CLIENT] Connection closed.");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(game.getSelected1());
+            System.out.println(game.getSelected2());
+            objectOut.writeObject(game);
+            objectOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void sendSelected(String selected) {
-        try {
-            dataOut.writeUTF(selected);
-            dataOut.flush();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void setSelected(String selected) {
-        this.selected = selected;
-        sendSelected(selected);
-    }
 
 }

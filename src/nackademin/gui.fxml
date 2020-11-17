@@ -55,7 +55,7 @@
                </children>
             </HBox>
             <Separator prefWidth="200.0" />
-                <Label fx:id="question" prefHeight="144.0" prefWidth="436.0" text="Question" />
+                <Label fx:id="question" alignment="CENTER" prefHeight="144.0" prefWidth="436.0" text="Question" textAlignment="CENTER" />
             </children>
         </VBox>
     </top>
