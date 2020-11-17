@@ -82,7 +82,6 @@ public class Client extends Application implements Runnable {
                 }
             }
             Platform.runLater(() -> controller.showCorrectAnswer());
-
             System.out.println("[CLIENT] Round completed. Correct answer is displayed.");
 
         } catch (IOException | ClassNotFoundException ex) {
@@ -93,7 +92,7 @@ public class Client extends Application implements Runnable {
     private void closeConnection() {
         try {
             socket.close();
-            System.out.println("Connection closed.");
+            System.out.println("[CLIENT] Connection closed.");
         } catch (IOException ex) {
             ex.printStackTrace();
         }

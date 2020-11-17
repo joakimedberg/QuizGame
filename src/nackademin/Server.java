@@ -16,7 +16,7 @@ public class Server {
     private ServerSocket serverSocket;
     private ExecutorService executorService = Executors.newFixedThreadPool(2);
     private ArrayList<ClientHandler> clients = new ArrayList<>();
-    private int countOfPicks = 0;
+    private int countOfSelected = 0;
 
     public Server() {
 
@@ -57,7 +57,7 @@ public class Server {
         private ObjectOutputStream objectOut;
 
         private int clientID;
-        private String pickedAnswer;
+        private String selected;
         private Database db;
 
 
@@ -70,7 +70,6 @@ public class Server {
 
         @Override
         public void run() {
-
             try {
                 dataIn = new DataInputStream(socket.getInputStream());
                 dataOut = new DataOutputStream(socket.getOutputStream());
@@ -82,22 +81,20 @@ public class Server {
                 objectOut.writeObject(db.getQuestions().get(0));
                 objectOut.flush();
 
-                while (countOfPicks < 2) {
+                while (countOfSelected < 2) {
                     if (clientID == 1) {
-                        receivePick();
-                        System.out.println("[SERVER] Player 1 picked " + pickedAnswer);
-                        ++countOfPicks;
+                        receiveSelected();
+                        System.out.println("[SERVER] Player 1 picked " + selected);
+                        ++countOfSelected;
                     } else if (clientID == 2) {
-                        receivePick();
-                        System.out.println("[SERVER] Player 2 picked " + pickedAnswer);
-                        ++countOfPicks;
+                        receiveSelected();
+                        System.out.println("[SERVER] Player 2 picked " + selected);
+                        ++countOfSelected;
                     }
-
                 }
                 System.out.println("[SERVER] All players have picked an answer.");
 
                 sendCompleted(true);
-
                 System.out.println("[SERVER] Turn is completed. Showing correct answer.");
 
             } catch (IOException | NullPointerException ex) {
@@ -112,19 +109,14 @@ public class Server {
             }
         }
 
-
-        private void receivePick() {
-            try {
-                pickedAnswer = dataIn.readUTF();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+        private void receiveSelected() throws IOException {
+            selected = dataIn.readUTF();
         }
 
         private void closeConnection() {
             try {
                 socket.close();
-                System.out.println("Connection closed.");
+                System.out.println("[SERVER] Connection closed.");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
