@@ -78,10 +78,6 @@ public class Game implements Serializable {
     public void setSelected2(String selected) {
         selected2 = selected;
     }
-    public void setBool(boolean bool) {
-        this.bool = bool;
-        gradeAnswers();
-    }
 
     private void shuffleAnswers() {
         answers.add(qa.getAnswer());
@@ -91,7 +87,7 @@ public class Game implements Serializable {
 
         Collections.shuffle(answers);
     }
-    private void gradeAnswers() {
+    public void gradeAnswers() {
         if (getSelected1().equals(getAnswer())) {
             score1++;
         }

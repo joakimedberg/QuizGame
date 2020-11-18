@@ -46,7 +46,6 @@ public class Controller implements Initializable {
         score2.setText("0");
 
         question.setText("WAITING FOR PLAYER #2 TO CONNECT.");
-
     }
 
     public void setGame(Game game, int clientID) {
@@ -89,7 +88,7 @@ public class Controller implements Initializable {
         pos4.setDisable(true);
 
         client.sendGame();
-        client.setWait(true);
+
 
     }
 
@@ -107,9 +106,6 @@ public class Controller implements Initializable {
     }
 
     public void updateScore(int sc1, int sc2) {
-
-        System.out.println("score1 " + score1.getText() + " " + game.getScore1());
-        System.out.println("score2 " + score2.getText()+ " " + game.getScore2());
         score1.setText(String.valueOf(sc1));
         score2.setText(String.valueOf(sc2));
     }

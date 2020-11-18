@@ -55,13 +55,10 @@ public class Server {
         private DataOutputStream dataOut;
 
         private int clientID;
-        private String selected;
-
 
         public ClientHandler(Socket socket, int clientID) {
             this.socket = socket;
             this.clientID = clientID;
-
         }
 
         @Override
@@ -92,18 +89,15 @@ public class Server {
                     }
                 }
 
-                game.setBool(true);
+                game.gradeAnswers();
+                System.out.println("[SERVER] The answers from the players are graded.");
 
                 for (ClientHandler c : clients) {
                     c.objectOut.reset();
-                    System.out.println("score1 " + game.getScore1());
                     c.objectOut.writeObject(game);
                     c.objectOut.flush();
                 }
-
-
-
-
+                System.out.println("[SERVER] Points are set.");
 
             } catch (IOException | NullPointerException | ClassNotFoundException ex) {
                 ex.printStackTrace();

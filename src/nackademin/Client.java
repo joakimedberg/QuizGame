@@ -15,7 +15,6 @@ import nackademin.Game;
 public class Client extends Application implements Runnable {
 
     private int clientID;
-    private String selected;
 
     private Controller controller;
     private Game game;
@@ -25,7 +24,6 @@ public class Client extends Application implements Runnable {
     private ObjectInputStream objectIn;
     private ObjectOutputStream objectOut;
     private DataInputStream dataIn;
-    boolean wait = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -72,16 +70,15 @@ public class Client extends Application implements Runnable {
                 controller.setGame(game, clientID);
                 controller.populate();
             });
+            System.out.println("[CLIENT] Game started. First question is displayed.");
 
-            //while(!wait) {System.out.println(wait);}
             game = (Game) objectIn.readObject();
-
-            System.out.println(game.getScore1() + " jek " + game.getScore2());
 
             Platform.runLater(() -> {
                 controller.showCorrectAnswer();
                 controller.updateScore(game.getScore1(), game.getScore2());
             });
+            System.out.println("[CLIENT] displaying correct answer and updating the score.");
 
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();
@@ -103,9 +100,4 @@ public class Client extends Application implements Runnable {
             e.printStackTrace();
         }
     }
-
-    public void setWait(boolean wait) {
-        this.wait = wait;
-    }
-
 }
