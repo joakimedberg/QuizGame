@@ -66,7 +66,6 @@ public class Controller implements Initializable {
         pos3.setText(answers.get(2));
         pos4.setText(answers.get(3));
 
-
     }
 
     @FXML
@@ -88,7 +87,6 @@ public class Controller implements Initializable {
         pos4.setDisable(true);
 
         client.sendGame();
-
 
     }
 

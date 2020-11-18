@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Game implements Serializable {
-    private int clientID;
+
     private String player1;
     private String player2;
     private int score1;
@@ -15,8 +15,6 @@ public class Game implements Serializable {
     private String selected1;
     private String selected2;
     private ArrayList<String> answers;
-    private boolean bool;
-
 
     public Game() {
         Database db = new Database();
@@ -31,29 +29,17 @@ public class Game implements Serializable {
 
     }
 
-    public Game getGame() {
-        return this;
-    }
     public String getQuestion() {
         return qa.getQuestion();
     }
     public String getAnswer() {
         return qa.getAnswer();
     }
-    public String getPlayer1() {
-        return player1;
-    }
-    public String getPlayer2() {
-        return player2;
-    }
     public String getSelected1(){
         return selected1;
     }
     public String getSelected2(){
         return selected2;
-    }
-    public boolean getBool() {
-        return bool;
     }
     public List<String> getAnswers() {
         shuffleAnswers();
