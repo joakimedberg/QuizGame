@@ -21,8 +21,8 @@ public class Game implements Serializable {
         qa = db.getQuestions().get(0);
         answers = new ArrayList<>(4);
 
-        setPlayer1();
-        setPlayer2();
+        setPlayer1("#1");
+        setPlayer2("#2");
 
         score1 = 0;
         score2 = 0;
@@ -52,12 +52,21 @@ public class Game implements Serializable {
         return score2;
     }
 
-    private void setPlayer1() {
-        player1 = "#1";
+    public void setPlayer1(String player) {
+        player1 = player;
     }
-    private void setPlayer2() {
-        player2 = "#2";
+    public void setPlayer2(String player) {
+        player2 = player;
     }
+
+    public String getPlayer1() {
+        return player1;
+    }
+
+    public String getPlayer2() {
+        return player2;
+    }
+
     public void setSelected1(String selected) {
         selected1 = selected;
     }

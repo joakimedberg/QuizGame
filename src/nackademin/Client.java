@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.Socket;
 
-import nackademin.Game;
-
 public class Client extends Application implements Runnable {
 
     private int clientID;
